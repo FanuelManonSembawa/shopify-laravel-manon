@@ -28,8 +28,7 @@ class RedirController extends Controller
                 $shopData
             );
 
-            dd($storeUrl);
-            return redirect()->to('https://' . $storeUrl . '/admin');
+            return view('welcome');
         } else {
             return redirect()->away('https://' . $storeUrl . '/admin/oauth/error');
         }
