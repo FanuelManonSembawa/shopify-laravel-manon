@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shops', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('shop_url')->nullable()->unique();
-            $table->string('access_token')->nullable();
-            $table->string('hmac')->nullable();
-            $table->timestamp('created_at')->nullable();
+            $table->string('sku');
+            $table->json('data')->nullable();
+            $table->string('shop_product_id')->nullable();
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('configurations');
+        Schema::dropIfExists('products');
     }
 };

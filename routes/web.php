@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ShopifyController;
+use App\Http\Controllers\InstallController;
+use App\Http\Controllers\RedirController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/shopify', [ShopifyController::class,'index']);
-
-Route::get('/token', [ShopifyController::class,'token']);
+Route::get('/install', [InstallController::class,'install']);
+Route::get('/redir', [RedirController::class,'redir']);
 
 
