@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Config;
-use App\Models\Store;
 use Illuminate\Support\Facades\Response;
 use App\Http\Controllers\InstallController;
 
