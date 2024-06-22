@@ -20,8 +20,9 @@ class ProductController extends Controller
         $curl = curl_init();
 
         $checkShopify = $this->checkProductShopify($product['kode']);
+
         if (count($checkShopify["data"]["products"]["edges"]) >= 1) {
-            Log::info("product found");
+            $updateProduct = $this->updateProduct($product, $checkShopify["data"]["products"]["edges"][0]['node']['legacyResourceId']);
         } else {
             $createProduct = $this->createProduct($product);
         }
@@ -95,7 +96,7 @@ class ProductController extends Controller
 
             $productData = [
                 'sku' => $request['kode'],
-                'data' => $payload,
+                'data' => json_encode($payload),
                 'shop_product_id' => $response_create['product']['id'],
             ];
     
@@ -103,8 +104,52 @@ class ProductController extends Controller
                 ['sku' => $request['kode']],
                 $productData
             );
+		
+        return $response->json();
+    }
 
-            Log::info($checkShopify);
+    public function updateProduct($request, $id)
+    {
+
+        $tenants = $this->getTenants();
+        $shopDomain = $tenants->domain;
+        $accessToken = $tenants->token;
+
+        $variant = array(
+            'price' => $request['harga'],
+            'sku' => $request['kode'],
+            'title' => $request['nama'],
+            'weight' => $request['berat'],
+            'weight_unit' => 'kg'
+        );
+
+        $image = array(
+            'src' => $request['gambar'][0]['image']
+        );
+
+		$payload['product'] = array(
+            'title' => $request['nama'],
+            'body_html' => $request['deskripsi'],
+            'status' => $request['status']=='Enable' ? 'active' : 'draft',
+            'images' => $image,
+            'variants' => $variant
+        );
+
+        $response = Http::withHeaders(['X-Shopify-Access-Token' => $accessToken])
+            ->put("https://{$shopDomain}/admin/api/2024-04/products/".$id.".json", $payload);
+
+        $response_create = $response->json();
+
+            $productData = [
+                'sku' => $request['kode'],
+                'data' => json_encode($payload),
+                'shop_product_id' => $response_create['product']['id'],
+            ];
+    
+            \DB::table('products')->updateOrInsert(
+                ['sku' => $request['kode']],
+                $productData
+            );
 		
         return $response->json();
     }
