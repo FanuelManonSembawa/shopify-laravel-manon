@@ -16,6 +16,7 @@ class RedirController extends Controller
         $installController = new InstallController;
         $installController->setShopDomain($storeUrl);
         $token = $this->getAccessToken($code,$storeUrl);
+        $returnUri = 'https://' . $storeUrl . '/admin';
 
         if ($token != '') {
             $shopData = [
@@ -28,7 +29,7 @@ class RedirController extends Controller
                 $shopData
             );
 
-            return view('welcome');
+            return redirect()->to($returnUri)->send();
         } else {
             return redirect()->away('https://' . $storeUrl . '/admin/oauth/error');
         }
@@ -39,8 +40,8 @@ class RedirController extends Controller
         $access_token_endpoint = 'https://' . $storeUrl . '/admin/oauth/access_token';
 
         $body = array(
-            "client_id" => Config::get('shopify.shopify_client_id'),
-            "client_secret" => Config::get('shopify.shopify_client_secret'),
+            "client_id" => "4864b99a0fa1f452c17f26248125e5b2",
+            "client_secret" => "5d1c57653eec1970c3e2f19eb29d6a40",
             "code" => $code
         );
 

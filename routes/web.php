@@ -16,7 +16,7 @@ use App\Http\Controllers\RedirController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('shopify_welcome');
 });
 
 Route::get('/install', [InstallController::class,'install']);

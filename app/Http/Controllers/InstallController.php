@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class InstallController extends Controller
 {
@@ -11,9 +12,9 @@ class InstallController extends Controller
 
     public function install(\Illuminate\Http\Request $request)
     {
-        $redirectUrl = Config::get('shopify.base_url') . '/be-assesment/public/redir';
+        $redirectUrl = 'https://5996-149-113-66-45.ngrok-free.app/be-assesment/public/redir';
         $shopifyDomain = $request->shop;
-        $scopes = Config::get('shopify.shopify_scopes');
+        $scopes = 'read_products,write_products';
         $authorizeUrl = $this->getAuthorizeUrl($shopifyDomain, $scopes, $redirectUrl);
         
         return redirect()->to($authorizeUrl);
@@ -21,13 +22,15 @@ class InstallController extends Controller
 
     public function getAuthorizeUrl(string $url, $scope = '', $redirect_url = '') : string
     {
-        $client_id = Config::get('shopify.shopify_client_id');
+        $client_id = '4864b99a0fa1f452c17f26248125e5b2';
+        $nonce = bin2hex(random_bytes(12));
+        $accessMode = 'offline';
         $this->setShopDomain($url);
 
         $url = "https://{$this::$shopDomain}/admin/oauth/authorize?client_id=" . $client_id . "&scope=" . urlencode($scope);
-
+        
         if ($redirect_url != '') {
-            $url .= "&redirect_uri=" .urlencode($redirect_url);
+            $url .= "&redirect_uri=" .urlencode($redirect_url) . "&state=" . $nonce . "&grant_options[]=" . $accessMode;
         }
 
         return $url;
