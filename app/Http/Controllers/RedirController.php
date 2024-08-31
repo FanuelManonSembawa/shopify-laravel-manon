@@ -35,7 +35,7 @@ class RedirController extends Controller
         }
     }
 
-    public function getAccessToken(string $code, $storeUrl)
+    protected function getAccessToken(string $code, $storeUrl)
     {
         $access_token_endpoint = 'https://' . $storeUrl . '/admin/oauth/access_token';
 

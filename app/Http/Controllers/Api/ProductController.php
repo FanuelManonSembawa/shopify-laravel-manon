@@ -22,17 +22,19 @@ class ProductController extends Controller
 
             if (!$checkProduct) {
 
-                \DB::table('products')
-                ->insert([
+                $product_id = \DB::table('products')
+                ->insertGetId([
                     'sku' => $request->product['kode']
                 ]);
+
+                $checkProduct = Products::find($product_id);
 
             } 
 
             if ($checkProduct->shop_product_id == null) {
                 $checkShopify = $this->checkProductShopify($request->product['kode']);
 
-                if (count($checkShopify["data"]["products"]["edges"]) >= 1) {
+                if (isset($checkShopify["data"]["products"]["edges"]) && !empty($checkShopify['data']['products']['edges'])) {
                     $updateProduct = $this->updateProduct($request->product, $checkShopify["data"]["products"]["edges"][0]['node']['legacyResourceId']);
                     $shopifyProductCreate = false;
                 } else {
@@ -83,7 +85,7 @@ class ProductController extends Controller
         }
     }
 
-    public function checkProductShopify($sku)
+    protected function checkProductShopify($sku)
 	{
 		$tenants = $this->getTenants();
         $shopDomain = $tenants->domain;
@@ -106,7 +108,7 @@ class ProductController extends Controller
         return $response->json();
 	}
 
-    public function createProduct($request)
+    protected function createProduct($request)
     {
 
         $tenants = $this->getTenants();
@@ -155,7 +157,7 @@ class ProductController extends Controller
         return $response;
     }
 
-    public function updateProduct($request, $id)
+    protected function updateProduct($request, $id)
     {
 
         $tenants = $this->getTenants();
